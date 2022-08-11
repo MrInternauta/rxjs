@@ -1,18 +1,33 @@
-import { fromEvent, Observable } from "rxjs";
+import { fromEvent } from "rxjs";
+const letterRows = Array.from(document.getElementsByClassName('letter-row') || [])
+const onKeyDown$ = fromEvent(document, 'keydown');
+let letterIndex = 0;
+let letterRowIndex = 0;
 
-// agregar $ al final
-const observableAlfa$ = new Observable(suscriber => {
-  suscriber.next(10);
-  suscriber.next(2);
-  suscriber.next(3);
-  suscriber.next(1);
-  suscriber.complete() //observable finished
-  //suscriber.error('Error en el flujo') //observable finished
-})
-
-const observador = {
+const insertLetter$ = {
   next: (value) => {
-    console.log('Value', value);
+    const pressedKey = value.key;
+    if (letterRowIndex > 5) {
+      return
+    }
+    if (pressedKey.length == 1 && pressedKey.match(/[a-z]/i) && letterIndex <= 4) {
+      let letterBox = letterRows[letterRowIndex].children[letterIndex];
+      letterBox.textContent = pressedKey.toUpperCase();
+      letterBox.classList.add('filled-letter');
+      letterIndex++;
+    }
+
+    if (pressedKey == 'Backspace' && letterRows[letterRowIndex].children[letterIndex - 1]) {
+      let letterBox = letterRows[letterRowIndex].children[letterIndex - 1];
+      letterBox.textContent = null;
+      letterBox.classList.remove('filled-letter');
+      letterIndex--;
+    }
+
+    if (pressedKey == 'Enter' && letterIndex > 4) {
+      letterRowIndex++;
+      letterIndex = 0;
+    }
   },
   complete: () => {
     console.info('Finished');
@@ -21,19 +36,4 @@ const observador = {
     console.error(error)
   }
 }
-
-observableAlfa$.subscribe(observador);
-
-//fromEvent to mousemove
-// const observableMouse$ = fromEvent(document, 'mousemove');
-// const observadorMouse$ = {
-//   next: (value) => console.log('Mouse', value),
-// }
-// observableMouse$.subscribe(observadorMouse$);
-
-//fromEvent to keydown
-const observableKey$ = fromEvent(document, 'keydown');
-const observadorKey$ = {
-  next: (value) => console.log('Keyboard', value.key),
-}
-observableKey$.subscribe(observadorKey$);
+onKeyDown$.subscribe(insertLetter$);
