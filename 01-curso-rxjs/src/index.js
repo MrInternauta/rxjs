@@ -1,39 +1,40 @@
-import { fromEvent, Observable } from "rxjs";
+/**
+ * Observables: Subject
+ * https://rxjs.dev/guide/subject
+ */
+import { Observable, Subject } from "rxjs";
 
-// agregar $ al final
-const observableAlfa$ = new Observable(suscriber => {
-  suscriber.next(10);
-  suscriber.next(2);
-  suscriber.next(3);
-  suscriber.next(1);
-  suscriber.complete() //observable finished
-  //suscriber.error('Error en el flujo') //observable finished
-})
+const numbers$ = new Observable((subscriber) => {
+  // Podemos enviar una función (como Math.random) que generará el mismo dato en observador1 y observador2.
+  subscriber.next(Math.round(Math.random() * 100));
+  subscriber.next(Math.round(Math.random() * 100));
 
-const observador = {
-  next: (value) => {
-    console.log('Value', value);
+});
+
+const numbersRandom$ = new Subject();
+
+const observador1 = {
+  next: (number) => {
+    console.log('observador1 ' + number);
   },
-  complete: () => {
-    console.info('Finished');
+};
+
+const observador2 = {
+  next: (number) => {
+    console.log('observador2 ' + number);
   },
-  error: (error) => {
-    console.error(error)
-  }
-}
+};
 
-observableAlfa$.subscribe(observador);
+const observador3 = {
+  next: (number) => {
+    console.log(number);
+  },
+};
 
-//fromEvent to mousemove
-// const observableMouse$ = fromEvent(document, 'mousemove');
-// const observadorMouse$ = {
-//   next: (value) => console.log('Mouse', value),
-// }
-// observableMouse$.subscribe(observadorMouse$);
+numbersRandom$.subscribe(observador1);
+numbersRandom$.subscribe(observador2);
 
-//fromEvent to keydown
-const observableKey$ = fromEvent(document, 'keydown');
-const observadorKey$ = {
-  next: (value) => console.log('Keyboard', value.key),
-}
-observableKey$.subscribe(observadorKey$);
+numbers$.subscribe(numbersRandom$);
+// También podemos enviar valores fuera del observable Subject.
+numbersRandom$.next(45);
+numbersRandom$.next(Math.round(Math.random() * 100));
