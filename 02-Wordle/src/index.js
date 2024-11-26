@@ -59,11 +59,11 @@ const checkWord = {
       }
 
 
-      // if (correctAnswer == letterUserAnswer.join('')) {
-      //   userScore$.next('User win')
-      // } else {
-      //   userScore$.next('User lose')
-      // }
+      if (correctAnswer == letterUserAnswer.join('')) {
+        userScore$.next('User win')
+      } else {
+        userScore$.next('User lose')
+      }
 
       letterRowIndex++;
       letterIndex = 0;
@@ -94,12 +94,12 @@ onKeyDown$.subscribe(deleteLetter);
 
 userScore$.subscribe({
   next: (value) => {
-// let letterRowsWinned = letterRows[letterRowIndex];
-// console.log(letterRowsWinned);
-// for (let index = 0; index < 5; index++) {
-//   letterRowsWinned.children[index].classList.add(value === 'User win' ? 'letter-green' : 'letter-yellow')
-// }
-// correctAnswer = getRandomWord();
-// console.log(correctAnswer);
+let letterRowsWinned = letterRows[letterRowIndex];
+console.log(letterRowsWinned);
+for (let index = 0; index < 5; index++) {
+  letterRowsWinned.children[index].classList.add(value === 'User win' ? 'letter-green' : 'letter-yellow')
+}
+correctAnswer = getRandomWord();
+console.log(correctAnswer);
   }
 })
